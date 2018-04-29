@@ -139,3 +139,4 @@ geco-engine.VC.db
 *.log
 *.enc
 *.vs
+/x64

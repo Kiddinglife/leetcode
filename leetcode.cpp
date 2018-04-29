@@ -42,7 +42,6 @@ static vector<int> twoSum(vector<int>& nums, int target)
 	//hash table
 	//hashtable search b in the left of a : tartget - a = hashed(b)
 	//for right wait loop go forwards: tartget - b = hash(a)
-	*/
 
 	// use unordered_map o(n)
 	int size = nums.size();
@@ -50,8 +49,6 @@ static vector<int> twoSum(vector<int>& nums, int target)
 	unordered_map<int, int> hash;
 	for (int i = 0; i < size; ++i)
 	{
-
-
 		int val = target - nums[i];
 		auto itr = hash.find(val);
 		if (itr != hash.end())
@@ -63,8 +60,73 @@ static vector<int> twoSum(vector<int>& nums, int target)
 		hash.insert(pair<int, int>(nums[i], i));
 	}
 	return ret;
+	*/
+	vector<int > ret(2);
+	int size = nums.size();
+	if (size < 2)
+		return ret;
+	unordered_multimap<int, int> idxs;
+	for (int i = 0; i < nums.size(); ++i)
+		idxs.insert(pair<int, int>(nums[i], i));
+	sort(nums.begin(), nums.end());
+	int left = 0;
+	int right = size - 1;
+	int sum;
+	while (left < right)
+	{
+		if ((nums[left] + nums[right]) > target)
+			--right;
+		else if ((nums[left] + nums[right]) < target)
+			++left;
+		else
+		{
+			if (idxs.find(nums[left])->first == idxs.find(nums[right])->first)
+			{
+				auto rett = idxs.equal_range(nums[left]);
+				//for (auto it = rett.first; it != rett.second; ++it)
+				//	std::cout << it->second;
+				//cout << endl;
+				ret[0] = rett.first->second + 1;
+				++rett.first;
+				ret[1] = rett.first->second + 1;
+			}
+			else
+			{
+				ret[0] = idxs.find(nums[left])->second + 1;
+				ret[1] = idxs.find(nums[right])->second + 1;
+			}
+			break;
+		}
+	}
+	return ret;
 }
 
+// 1. Two Sum sorted  https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/description/
+static vector<int> twoSumSorted(vector<int>& nums, int target)
+{
+	vector<int > ret(2);
+	int size = nums.size();
+	if (size < 2)
+		return ret;
+
+	int left = 0;
+	int right = size - 1;
+	int sum;
+	while (left < right)
+	{
+		if ((nums[left] + nums[right]) > target)
+			--right;
+		else if ((nums[left] + nums[right]) < target)
+			++left;
+		else
+		{
+			ret[0] = left + 1;
+			ret[1] = right + 1;
+			break;
+		}
+	}
+	return ret;
+}
 static vector<vector<int> > threeSum(vector<int>& nums)
 {
 	// my first solution leetcode 800ms all passed using multimap
@@ -152,9 +214,9 @@ static vector<vector<int> > threeSum(vector<int>& nums)
 		return ret;
 
 	sort(nums.begin(), nums.end());
-	for (size_t i = 0; i < nums.size(); i++)
-		std::cout << nums[i] << ", ";
-	std::cout << endl;
+	//for (size_t i = 0; i < nums.size(); i++)
+	//	std::cout << nums[i] << ":" << i <<", ";
+	//std::cout << endl;
 
 	int max_num = nums.back();
 	if (max_num < 0)
@@ -170,8 +232,6 @@ static vector<vector<int> > threeSum(vector<int>& nums)
 
 	for (size_t i = 0; i < size; ++i)
 	{
-		if (i == 5)
-			cout << i << endl;
 		// 	all numbers after number 1 are greater than 0 
 		// example: 1(i)  [2(left)] 222222  33333[3(right)]
 		if (nums[i] > 0)
@@ -179,7 +239,7 @@ static vector<vector<int> > threeSum(vector<int>& nums)
 
 		// bypass duplicate numbers at index of i
 		// example:  00 111111111111[1(i)] 222222  33333
-		while (i < size - 1 && nums[i] == nums[i + 1] && nums[i + 1] == nums[i + 2]) { ++i; }
+		while (i < size - 1 && nums[i] != 0 && nums[i] == nums[i + 1] && nums[i + 1] == nums[i + 2]) { ++i; }
 
 		left = i + 1;
 		right = originsize - 1;
@@ -221,30 +281,76 @@ static vector<vector<int> > threeSum(vector<int>& nums)
 			else
 			{
 				triple.assign({ nums[i], nums[left], nums[right] });
+				//for (size_t i = 0; i < 3; i++)
+				//	std::cout << triple[i] << " ";
+				//std::cout << endl;
 				ret.push_back(triple);
 
-				for (size_t i = 0; i < 3; i++)
-					std::cout << triple[i] << " ";
-				std::cout << endl;
+				// bypass duplicate numbers in search range defined by left and right only whenthe triple is found
+				// example:  0(i) -1-1-1-1-1[-1(left)] 11111 222222 [3(right)] 33333
+				// after bypass, lfet is at the rightmost number -1, right is at the leftmost number 3
+				while (left < right && nums[left] == nums[left + 1]) { ++left; }
+				while (right > left && nums[right] == nums[right - 1]) { --right; }
+
+				// bypass duplicated numbers at index i only whenthe triple is found
+				// example:  -1 -1(i) 0(left) 1(right), need to bypass the other -1 0 1
+				while (i < left && nums[i] == nums[i + 1]) { i++; }
 
 				++left;
 				--right;
-
-				// bypass duplicate numbers in search range defined by left and right only when it is found
-				// example:  0(i) -1-1-1-1-1[-1(left)] 11111 222222 [3(right)] 33333
-				// after bypass, lfet is at the rightmost number -1, right is at the leftmost number 3
-				// in such way search range is miminized and so search gets faster. 
-				while (left < right && nums[left-1] == nums[left + 1]) { ++left; }
-				while (left < right && nums[right] == nums[right - 1]) { --right; }
-
-				// bypass duplicated numbers at index i as we already found them 
-				while (i < originsize && nums[i] == nums[i + 1]) { i++; }
 			}
 		}
 	}
 	return ret;
 }
 
+// https://leetcode.com/problems/3sum-closest/description/
+static int threeSumClosest(vector<int>& nums, int target)
+{
+	int size = nums.size();
+	int originsize = size;
+	int ret;
+	int mindiff = 0;
+
+	if (size <= 3)
+	{
+		ret = 0;
+		for (size_t i = 0; i < nums.size(); i++)
+			ret += nums[i];
+		return ret;
+	}
+
+	sort(nums.begin(), nums.end());
+	for (size_t i = 0; i < nums.size(); i++)
+		std::cout << nums[i] << ":" << i <<", ";
+	std::cout << endl;
+
+	size_t left, right; 	// defines search range
+	size -= 2; // -2 is to stop when less than 3 numbers 
+	int sum;
+
+	for (size_t i = 0; i < size; ++i)
+	{
+		left = i + 1;
+		right = originsize - 1;
+		while (left < right)
+		{
+			sum = nums[i] + nums[left] + nums[right];
+			if (sum > target)
+				--right;
+			else if (sum < target)
+				++left;
+			else
+				return target;
+		}
+		if (mindiff == 0 || mindiff > abs(target - sum))
+		{
+			mindiff = abs(target - sum);
+			ret = sum;
+		}
+	}
+	return ret;
+}
 struct add_2_number_node_t
 {
 	int val;
@@ -260,8 +366,8 @@ static add_2_number_node_t* addTwoNumbers(add_2_number_node_t* l1, add_2_number_
 }
 int main()
 {
-	vector<int> vec_two_sum{ 2, 7, 11, 15 };
-	int target_two_sum = 9;
+	vector<int> vec_two_sum{ 0,0,3,4 };
+	int target_two_sum = 0;
 	vector<int> ret_two_sum = twoSum(vec_two_sum, target_two_sum);
 	for (size_t i = 0; i < ret_two_sum.size(); i++)
 	{
@@ -269,7 +375,7 @@ int main()
 	}
 
 	vector<vector<int> > sum3_ret;
-	vector<int> sum3_iput{ -4,-2,1,-5,-4,-4,4,-2,0,4,0,-2,3,1,-5,0 }; // 0, 0, 0, 0, 0, 1
+	vector<int> sum3_iput{ -2,0,1,1,2 };  //-2 -2 -2  0000 111  2222
 	sum3_ret = threeSum(sum3_iput);
 	cout << "\nsum3_ret: ";
 	if (sum3_ret.empty())
@@ -284,5 +390,12 @@ int main()
 			}
 			cout << "], ";
 		}
+
+	int sum3_closeast_ret;
+	vector<int> sum3_closeast_array{ 0,1,1,1 };  //-2 -2 -2  0000 111  2222
+	int sum3_closeast_tartget = -100;
+	sum3_closeast_ret = threeSumClosest(sum3_closeast_array, sum3_closeast_tartget);
+	cout << "\nsum3_closeast_ret: " << sum3_closeast_ret << endl;
+
 	return 0;
 }

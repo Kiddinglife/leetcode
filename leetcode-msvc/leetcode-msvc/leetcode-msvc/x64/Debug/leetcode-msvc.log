@@ -1,4 +1,8 @@
 ﻿  leetcode.cpp
-d:\my-leetcode-solution\leetcode.cpp(48): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\my-leetcode-solution\leetcode.cpp(149): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+d:\my-leetcode-solution\leetcode.cpp(65): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+d:\my-leetcode-solution\leetcode.cpp(74): warning C4101: “sum”: 未引用的局部变量
+d:\my-leetcode-solution\leetcode.cpp(108): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+d:\my-leetcode-solution\leetcode.cpp(114): warning C4101: “sum”: 未引用的局部变量
+d:\my-leetcode-solution\leetcode.cpp(211): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+d:\my-leetcode-solution\leetcode.cpp(310): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
   leetcode-msvc.vcxproj -> D:\my-leetcode-solution\leetcode-msvc\leetcode-msvc\x64\Debug\leetcode-msvc.exe

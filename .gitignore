@@ -131,3 +131,10 @@ msvc/.vs
 geco-engine.VC.db
 *.idb
 /Debug/
+*.ilk
+*.pdb
+*.id
+*.pd
+*.suo
+*.log
+*.enc

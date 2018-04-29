@@ -138,3 +138,4 @@ geco-engine.VC.db
 *.suo
 *.log
 *.enc
+*.vs

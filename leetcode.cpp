@@ -126,6 +126,7 @@ static vector<int> twoSumSorted(vector<int>& nums, int target)
   }
   return ret;
 }
+
 static vector<vector<int> > threeSum(vector<int>& nums)
 {
   // my first solution leetcode 800ms all passed using multimap
@@ -403,18 +404,144 @@ static int removeElement(vector<int>& nums, int val)
   return pos == -1 ? vsize : pos;
 }
 
-struct add_2_number_node_t
-{
-    int val;
-    add_2_number_node_t *next;
-    add_2_number_node_t(int x) :
-        val(x), next(NULL)
-    {
-    }
-};
-static add_2_number_node_t* addTwoNumbers(add_2_number_node_t* l1, add_2_number_node_t* l2)
-{
+/*
+ Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array),
+ some elements appear twice and others appear once.
+ Find all the elements of [1, n] inclusive that do not appear in this array.
+ Could you do it without extra space and in O(n) runtime? You may assume the
+ returned list does not count as extra space.
 
+ Example:
+ Input:
+ [4,3,2,7,8,2,3,1]
+ [-1,1,3]
+ Output:
+ [5,6]
+ */
+static vector<int> findDisappearedNumbers(vector<int>& nums)
+{
+  //  sort v1 slow 14.42% beats
+  //  vector<int> ret;
+  //  nums.push_back(0);
+  //  int vsize = nums.size();
+  //  nums.push_back(vsize);
+  //  vsize++;
+  //  int size = vsize -2;
+  //  std::sort(nums.begin(), nums.end());
+  //  for (int i = 0; i < vsize; ++i)
+  //  {
+  //    if(nums[i] > vsize)
+  //      break;
+  //
+  //    if (i + 1 < vsize && nums[i+1] - nums[i] > 1)
+  //    {
+  //      int v = nums[i] + 1;
+  //      do
+  //      {
+  //        if (v >= 1 && v <= size)
+  //        {
+  //          ret.push_back(v);
+  //          v++;
+  //        }
+  //        else
+  //          break;
+  //      } while (v < nums[i+1]);
+  //    }
+  //  }
+  //  return ret;
+
+  // v2 notice that there is assuptio that nums is betwwen trnage of vector so use vector to mark existing munbers
+  // this is faster than v1 as we save sort(), if n osuch assumption, sort(0 is more stable and faster
+  // beats 97.87% 126ms
+  int len = nums.size();
+  vector<int> res;
+  res.reserve(len / 2);
+  int i, m;
+  for (i = 0; i < len; i++)
+  {
+    m = abs(nums[i]) - 1; // index start from 0
+    if (nums[m] > 0)
+      nums[m] = -nums[m]; // must use -nums[m] as we may use it laters
+  }
+  for (i = 0; i < len; i++)
+  {
+    if (nums[i] > 0)
+      res.push_back(i + 1);
+  }
+  return res;
+
+}
+
+/**
+ Given an integer array nums, find the contiguous subarray
+ (containing at least one number) which has the largest sum
+ and return its sum.
+
+ Example:
+ Input: [-2,1,-3,4,-1,2,1,-5,4],
+ Output: 6
+ Explanation: [4,-1,2,1] has the largest sum = 6.
+
+ Input: [1,-2,1, 2],
+ Output: 6
+ Explanation: [4,-1,2] has the largest sum = 5.]
+ sum = -2, res = -2, min = -2;
+ sum = -1, res = 1,
+
+ Follow up:
+ If you have figured out the O(n) solution, try coding
+ another solution using the divide and conquer approach, which is more subtle.
+ */
+int maxSubArray(int A[], int n)
+{
+  int sum = 0, min = 0, res = A[0];
+  for (int i = 0; i < n; i++)
+  {
+    sum += A[i];
+    if (sum - min > res)
+      res = sum - min;
+
+    if (sum < min)
+      min = sum;
+  }
+  return res;
+}
+
+/**
+ https://leetcode.com/problems/rotate-array/description/
+ Given an array, rotate the array to the right by k steps, where k is non-negative.
+
+ Example 1:
+ Input: [1,2,3,4,5,6,7] and k = 3
+ Output: [5,6,7,1,2,3,4]
+ Explanation:
+ rotate 1 steps to the right: [7,1,2,3,4,5,6]
+ rotate 2 steps to the right: [6,7,1,2,3,4,5]
+ rotate 3 steps to the right: [5,6,7,1,2,3,4]
+
+ Example 2:
+ Input: [-1,-100,3,99] and k = 2
+ Output: [3,99,-1,-100]
+ Explanation:
+ rotate 1 steps to the right: [99,-1,-100,3]
+ rotate 2 steps to the right: [3,99,-1,-100]
+ */
+void array_rotate(vector<int>& nums, int k)
+{
+  int vsize = nums.size();
+  if (vsize == 0)
+    return;
+  k %= vsize;
+  std::cout << k;
+  if(k <= 0)
+    return;
+  int offset = vsize - k;
+  for (int i = 0, cur = 0; i < vsize - 1; i++, cur++)
+  {
+    std::swap(nums[i], nums[offset + cur]);
+    if (cur == k - 1)
+      cur = -1;
+  }
 }
 int main()
 {
@@ -464,7 +591,7 @@ int main()
     std::cout << remove_duplicates_array[i] << " ";
   std::cout << endl;
 
-  vector<int> remove_element_array { 1,1,1,0, 1,1,0};
+  vector<int> remove_element_array { 1, 1, 1, 0, 1, 1, 0 };
   int removing_element = 1;
   int remove_element_ret = removeElement(remove_element_array, removing_element);
   std::cout << "remove_element_ret: " << remove_element_ret << ", array: ";
@@ -472,5 +599,19 @@ int main()
     std::cout << remove_element_array[i] << " ";
   std::cout << endl;
 
+  vector<int> findDisappearedNumbers_array { 4, 3, 2, 7, 8, 2, 3, 1 };
+  vector<int> findDisappearedNumbers_ret = findDisappearedNumbers(findDisappearedNumbers_array);
+  std::cout << "findDisappearedNumbers_ret: ";
+  for (int i = 0; i < (int) findDisappearedNumbers_ret.size(); i++)
+    std::cout << findDisappearedNumbers_ret[i] << " ";
+  std::cout << endl;
+
+  vector<int> array_rotate_array{1,2,3,4,5,6,7};
+  int k = 4;
+  array_rotate(array_rotate_array, k);
+  std::cout << "array_rotate_array_ret: ";
+  for (int i = 0; i < (int) array_rotate_array.size(); i++)
+    std::cout << array_rotate_array[i] << " ";
+  std::cout << endl;
   return 0;
 }

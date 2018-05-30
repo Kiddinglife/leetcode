@@ -621,6 +621,7 @@ int maxProfit_i(vector<int>& prices)
 {
   int vsize = static_cast<int>(prices.size());
   int maxprofit = 0;
+  int sumprofit = 0;
   int curprofit;
   int buyprice = INT32_MAX;
   for (int i = 0; i < vsize; i++)
@@ -630,6 +631,7 @@ int maxProfit_i(vector<int>& prices)
     else
     {
       curprofit = prices[i] - buyprice;
+      sumprofit += curprofit;
       if (curprofit > maxprofit)
         maxprofit = curprofit;
     }
@@ -655,25 +657,42 @@ int maxProfit_i(vector<int>& prices)
  Input: [7,6,4,3,1]
  Output: 0
  Explanation: In this case, no transaction is done, i.e. max profit = 0.
+
+ DP idea is :
+ the global max profit sum must be the sum up of all local max profit.
  */
 int maxProfit_ii(vector<int>& prices)
 {
+  // basic idea is :
+  // the global max profit sum must be the sum up of all local max profit.
   int vsize = static_cast<int>(prices.size());
   int maxprofit = 0;
+  int maxprofitsum = 0;
   int curprofit;
   int buyprice = INT32_MAX;
   for (int i = 0; i < vsize; i++)
   {
     if (buyprice > prices[i])
+    {
+      // meet smaller buy price
+      maxprofit = 0;
       buyprice = prices[i];
-    else
+    } else
     {
       curprofit = prices[i] - buyprice;
       if (curprofit > maxprofit)
+      {
+        maxprofitsum -= maxprofit;// take away the smaller maxprofit
         maxprofit = curprofit;
+        maxprofitsum += maxprofit;//then add the larger maxprofit
+      }else
+      {
+        // meet a larger sell price
+        buyprice = prices[i];
+      }
     }
   }
-  return maxprofit;
+  return maxprofitsum;
 }
 int main()
 {

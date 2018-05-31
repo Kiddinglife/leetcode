@@ -682,10 +682,10 @@ int maxProfit_ii(vector<int>& prices)
       curprofit = prices[i] - buyprice;
       if (curprofit > maxprofit)
       {
-        maxprofitsum -= maxprofit;// take away the smaller maxprofit
+        maxprofitsum -= maxprofit; // take away the smaller maxprofit
         maxprofit = curprofit;
-        maxprofitsum += maxprofit;//then add the larger maxprofit
-      }else
+        maxprofitsum += maxprofit; //then add the larger maxprofit
+      } else
       {
         // meet a larger sell price
         buyprice = prices[i];
@@ -693,6 +693,32 @@ int maxProfit_ii(vector<int>& prices)
     }
   }
   return maxprofitsum;
+}
+// http://zxi.mytechroad.com/blog/dynamic-programming/leetcode-300-longest-increasing-subsequence/
+// 1 3 5 4 7
+// 2 2 2
+int findNumberOfLIS(vector<int>& nums)
+{
+  int n = nums.size(), maxlen = 0;
+  vector<int> cnt(n, 1), len(n, 1);
+  for (int i = 0; i < n; i++)
+  {
+    for (int j = 0; j < i && i > 0; j++)
+    {
+      if (nums[i] > nums[j])
+      {
+        if (len[j] + 1 > len[i])
+        {
+          len[i] = len[j] + 1;
+          cnt[i] = cnt[j];
+        } else if (len[j] + 1 == len[i])
+          cnt[i] += cnt[j];
+      }
+    }
+    if (maxlen < len[i])
+      maxlen = len[i];
+  };
+  return maxlen;
 }
 int main()
 {
@@ -769,7 +795,7 @@ int main()
   cout << "isValid ret: ";
   cout << isValid(s) << endl;
 
-  vector<int> array_maxProduct { 2, 3, -2, 4 };
+  vector<int> array_maxProduct { 2, };
   std::cout << "maxProduct: ";
   int ret_maxProduct = maxProduct(array_maxProduct);
   std::cout << ret_maxProduct << endl;
@@ -783,5 +809,11 @@ int main()
   std::cout << "maxProfit_ii: ";
   int ret_maxProfit_ii = maxProfit_ii(array_maxProfit_ii);
   std::cout << ret_maxProfit_ii << endl;
+
+  vector<int> array_findNumberOfLIS { 1, 2, 4, 3, 5, 4, 7, 2 };
+  std::cout << "findNumberOfLIS: ";
+  int ret_findNumberOfLIS = findNumberOfLIS(array_findNumberOfLIS);
+  std::cout << ret_findNumberOfLIS << endl;
+
   return 0;
 }

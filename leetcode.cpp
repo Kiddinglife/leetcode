@@ -7,16 +7,14 @@
 //============================================================================
 
 #include <iostream>
-#include <unordered_map>
 #include <map>
 #include <vector>
 #include <list>
 #include <set>
-#include <algorithm>
 #include <stack>
-#include <istream>
-#include <ostream>
-
+#include <unordered_map>
+#include <unordered_set>
+#include <algorithm>
 using namespace std;
 
 // 1. Two Sum https://leetcode.com/problems/two-sum/description/
@@ -695,15 +693,13 @@ int maxProfit_ii(vector<int>& prices)
   return maxprofitsum;
 }
 // http://zxi.mytechroad.com/blog/dynamic-programming/leetcode-300-longest-increasing-subsequence/
-// 1 3 5 4 7
-// 2 2 2
 int findNumberOfLIS(vector<int>& nums)
 {
-  int n = nums.size(), maxlen = 0;
+  int n = nums.size(), maxlen = 1, numaxlen = 0;
   vector<int> cnt(n, 1), len(n, 1);
   for (int i = 0; i < n; i++)
   {
-    for (int j = 0; j < i && i > 0; j++)
+    for (int j = 0; j < i; j++)
     {
       if (nums[i] > nums[j])
       {
@@ -716,10 +712,74 @@ int findNumberOfLIS(vector<int>& nums)
       }
     }
     if (maxlen < len[i])
+    {
       maxlen = len[i];
+      numaxlen = cnt[i];
+    } else if (maxlen == len[i])
+      numaxlen += cnt[i];
   };
-  return maxlen;
+  return numaxlen;
 }
+
+// https://leetcode.com/problems/subarray-sum-equals-k/description/
+int subarraySum(vector<int>& nums, int k)
+{
+  int cum = 0; // cumulated sum
+  int vsize = nums.size();
+  unordered_map<int, int> rec; // prefix sum recorder
+  int cnt = 0; // number of found subarray
+  rec[0]++; // to take into account those subarrays that begin with index 0
+  for (int i = 0; i < vsize; i++)
+  {
+    cum += nums[i];
+    cnt += rec[cum - k];
+    rec[cum]++;
+  }
+  return cnt;
+}
+
+// https://leetcode.com/problems/continuous-subarray-sum/description/
+bool checkSubarraySum(vector<int>& nums, int k)
+{
+  int n = nums.size(), sum = 0, pre = 0;
+  unordered_set<int> modk;
+  for (int i = 0; i < n; ++i)
+  {
+    sum += nums[i];
+    int mod = k == 0 ? sum : sum % k;
+    if (modk.count(mod))
+      return true;
+    modk.insert(pre);
+    pre = mod;
+  }
+  return false;
+}
+
+/*
+ https://leetcode.com/problems/subarray-product-less-than-k/description/
+
+ Your are given an array of positive integers nums.
+ Count and print the number of (contiguous) subarrays
+ where the product of all the elements in the subarray is less than k.
+
+ Example 1:
+ Input: nums = [10, 5, 2, 6], k = 100
+ Output: 8
+ Explanation: The 8 subarrays that have product less than 100 are:
+ [10], [5], [2], [6], [10, 5], [5, 2], [2, 6], [5, 2, 6].
+ Note that [10, 5, 2] is not included as the product of 100
+ is not strictly less than k.
+
+ Note:
+ 0 < nums.length <= 50000.
+ 0 < nums[i] < 1000.
+ 0 <= k < 10^6.
+ */
+int numSubarrayProductLessThanK(vector<int>& nums, int k)
+{
+
+}
+
 int main()
 {
   vector<int> vec_two_sum { 0, 0, 3, 4 };

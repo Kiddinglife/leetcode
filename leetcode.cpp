@@ -111,7 +111,7 @@ static vector<int> twoSumSorted(vector<int>& nums, int target)
 
   int left = 0;
   int right = size - 1;
-  int sum;
+
   while (left < right)
   {
     if ((nums[left] + nums[right]) > target)
@@ -529,7 +529,7 @@ int maxSubArray(int A[], int n)
 void array_rotate(vector<int>& nums, int k)
 {
   int i, n = nums.size(), offset = 0;
-  for (; k = k % n; n -= k)
+  for (; k %= n; n -= k)
   {
     // Swap the last k elements with the first k elements.
     // The last k elements will be in the correct positions
@@ -777,9 +777,91 @@ bool checkSubarraySum(vector<int>& nums, int k)
  */
 int numSubarrayProductLessThanK(vector<int>& nums, int k)
 {
-
+  if (k == 0)
+    return 0;
+  int cnt = 0;
+  int pro = 1;
+  int vsize = (int) nums.size();
+  for (int i = 0, j = 0; j < vsize; j++)
+  {
+    pro *= nums[j];
+    while (i <= j && pro >= k)
+    {
+      pro /= nums[i++];
+    }
+    cnt += j - i + 1;
+  }
+  return cnt;
 }
 
+/*
+ Your are given an array of integers prices, for which the i-th element is the price of a given stock on day i;
+ and a non-negative integer fee representing a transaction fee.
+ You may complete as many transactions as you like, but you need to pay the transaction fee for each transaction.
+ You may not buy more than 1 share of a stock at a time (ie. you must sell the stock share before you buy again.)
+ Return the maximum profit you can make.
+
+ Example 1:
+ Input: prices = [1, 3, 2, 8, 4, 9], fee = 2
+ Output: 8
+
+ Explanation: The maximum profit can be achieved by:
+ Buying at prices[0] = 1
+ Selling at prices[3] = 8
+ Buying at prices[4] = 4
+ Selling at prices[5] = 9
+ The total profit is ((8 - 1) - 2) + ((9 - 4) - 2) = 8.
+
+ Note:
+ 0 < prices.length <= 50000.
+ 0 < prices[i] < 50000.
+ 0 <= fee < 50000.
+ */
+int maxProfit_iii(vector<int>& prices, int fee)
+{
+  //DP idea is :
+  //the global max profit sum must be the sum up of all local max profit that
+  //must be the substraction of min buy price and largest sell price.
+  int vsize = static_cast<int>(prices.size());
+  int maxprofit = 0;
+  int maxprofitsum = 0;
+  int curprofit;
+  int buyprice = INT32_MAX;
+  int prebuyprice = INT32_MAX;
+  for (int i = 0; i < vsize; i++)
+  {
+    if (buyprice >= prices[i])
+    {
+      // meet smaller buy price and reset
+      maxprofit = 0;
+      prebuyprice = buyprice;
+      buyprice = prices[i];
+    } else
+    {
+      curprofit = prices[i] - buyprice - fee;
+      if (curprofit > maxprofit)
+      {
+        maxprofitsum -= maxprofit; // take away the smaller maxprofit
+        maxprofit = curprofit;
+        maxprofitsum += maxprofit; //then add the larger maxprofit
+      } else
+      {
+        // smaller profit because we meet a smaller sell price of prices[i]
+        // but this smaller sell price can be treated
+        // as a buy price in another transaction that can causes a larger profit.
+        maxprofit = 0;
+        buyprice = prices[i];
+        int profit = prices[i - 1] - prebuyprice - fee;
+        if (maxprofitsum < profit)
+        {
+          maxprofitsum = profit;
+          prebuyprice = buyprice;
+        }
+      }
+    }
+  }
+  return maxprofitsum;
+}
 int main()
 {
   vector<int> vec_two_sum { 0, 0, 3, 4 };

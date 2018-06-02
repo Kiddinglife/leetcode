@@ -820,47 +820,44 @@ int numSubarrayProductLessThanK(vector<int>& nums, int k)
 int maxProfit_iii(vector<int>& prices, int fee)
 {
   //DP idea is :
-  //the global max profit sum must be the sum up of all local max profit that
-  //must be the substraction of min buy price and largest sell price.
+  //the global max profit sum must be the sum up of the max between
+  //sum up of two local max profits and the substraction of the second transaction's sell price and
+  // the first transaction's buy price.
   int vsize = static_cast<int>(prices.size());
-  int maxprofit = 0;
   int maxprofitsum = 0;
-  int curprofit;
-  int buyprice = INT32_MAX;
-  int prebuyprice = INT32_MAX;
-  for (int i = 0; i < vsize; i++)
+  int buyprice;
+  int prebuyprice;
+  int sellprice;
+
+  for(int i =1; i < vsize; i++)
   {
-    if (buyprice >= prices[i])
-    {
-      // meet smaller buy price and reset
-      maxprofit = 0;
+    // find first buy price
+    if(prices[i-1] >= prices[i])
+      continue;
+    buyprice = prices[i-1];
+    if(maxprofitsum == 0)
       prebuyprice = buyprice;
-      buyprice = prices[i];
-    } else
+
+    i++;
+
+    if(prices[i-1] <= prices[i])
+      continue;
+    sellprice = prices[i-1];
+
+    maxprofitsum += sellprice - buyprice - fee;
+
+    // profit is the substraction of the second transaction's sell price and
+    // the first transaction's buy price.
+    int profit = sellprice - prebuyprice - fee;
+
+    // maxprofitsum now is sum up of the two adjcent transactions's max profits
+    if (maxprofitsum < profit)
     {
-      curprofit = prices[i] - buyprice - fee;
-      if (curprofit > maxprofit)
-      {
-        maxprofitsum -= maxprofit; // take away the smaller maxprofit
-        maxprofit = curprofit;
-        maxprofitsum += maxprofit; //then add the larger maxprofit
-      } else
-      {
-        // smaller profit because we meet a smaller sell price of prices[i]
-        // but this smaller sell price can be treated
-        // as a buy price in another transaction that can causes a larger profit.
-        maxprofit = 0;
-        buyprice = prices[i];
-        int profit = prices[i - 1] - prebuyprice - fee;
-        if (maxprofitsum < profit)
-        {
-          maxprofitsum = profit;
-          prebuyprice = buyprice;
-        }
-      }
+      maxprofitsum = profit;
+      prebuyprice = prices[i];
     }
   }
-  return maxprofitsum;
+  return max(0, maxprofitsum);
 }
 int main()
 {
@@ -951,6 +948,14 @@ int main()
   std::cout << "maxProfit_ii: ";
   int ret_maxProfit_ii = maxProfit_ii(array_maxProfit_ii);
   std::cout << ret_maxProfit_ii << endl;
+
+  // 1, 3, 7, 5, 10, 3  k3 p6
+  // 1, 3, 2,8,4,9 k3 p6
+  vector<int> array_maxProfit_iii { 1,1, 2,8};
+  int fee_maxProfit_iii = 3;
+  std::cout << "maxProfit_iii: ";
+  int ret_maxProfit_iii = maxProfit_iii(array_maxProfit_iii, fee_maxProfit_iii);
+  std::cout << ret_maxProfit_iii << endl;
 
   vector<int> array_findNumberOfLIS { 1, 2, 4, 3, 5, 4, 7, 2 };
   std::cout << "findNumberOfLIS: ";

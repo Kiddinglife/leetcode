@@ -890,32 +890,25 @@ std::vector<std::string> split(const std::string &s, char delim)
 
 int sig_codility_q1(string &S)
 {
-    unordered_map<string, int> logs;
+    unordered_map<string, std::pair<int, int>> logs;
     std::vector<std::string> entries = split(S, '\n');
     std::string time;
     std::string num;
     std::vector<std::string> entrystr;
     std::vector<std::string> timestrs;
-    int maxbills = 0;
     for (auto& entry : entries)
     {
-        //std::cout << entry << endl;
         time.clear();
         num.clear();
         entrystr = split(entry, ',');
         time = std::move(entrystr[0]);
-        //cout << time << endl;
+        num = std::move(entrystr[1]);
         timestrs = split(time, ':');
         int h2s = (atoi(string(1, timestrs[0][0]).c_str()) * 10 + atoi(string(1, timestrs[0][1]).c_str())) * 60 * 60;
-        //cout << string(1,timestrs[0][0]) << ":" << string(1,timestrs[0][1]) << endl;
-        //cout << h2s << endl;
         int m2s = (atoi(string(1, timestrs[1][0]).c_str()) * 10 + atoi(string(1, timestrs[1][1]).c_str())) * 60;
-        //cout << string(1,timestrs[1][0]) << ":" << string(1,timestrs[1][1]) << endl;
-        //cout << m2s << endl;
         int s = (atoi(string(1, timestrs[2][0]).c_str()) * 10 + atoi(string(1, timestrs[2][1]).c_str()));
-        //cout << string(1,timestrs[2][0]) << ":" << string(1,timestrs[2][1]) << endl;
-        //cout << s << endl;
         int sumup = h2s + m2s + s;
+        logs[num].first += sumup;
         int totalfee = 3 * sumup;
         if (sumup >= 5 * 60)
         {
@@ -927,26 +920,26 @@ int sig_codility_q1(string &S)
             sumup = (h2s + m2s + s) / 60;
             totalfee = 150 * sumup;
         }
-        //cout << sumup << endl;
-        //cout << totalfee << endl;
-        num = std::move(entrystr[1]);
-        logs[num] += totalfee;
-        if (maxbills < logs[num])
-            maxbills = logs[num];
-        //cout << logs[num] << endl;
-        //cout << logs[num] << endl;
+        logs[num].second += totalfee;
     }
-    //cout << maxbills << endl;
-    set<string> maxbillnums;
     int fee = 0;
+    int longest = 0;
+    set<string> nums;
     for (auto& entry : logs)
     {
-        cout << entry.first << ": " << entry.second << " ";
-        if (entry.second == maxbills)
-            maxbillnums.insert(entry.first);
-        fee += entry.second;
+        cout << entry.first << " t" << entry.second.first << " c" << entry.second.second << endl;
+        if (entry.second.first > longest)
+            longest = entry.second.first;
+        fee += entry.second.second;
     }
-    fee -= logs[*maxbillnums.begin()];
+    for (auto& entry : logs)
+    {
+        if (entry.second.first == longest)
+            nums.insert(entry.first);
+    }
+    string smallest_num = *nums.begin();
+    fee -= logs[smallest_num].second;
+    cout << "smallest_num: " << smallest_num << " longest: " << longest << endl;
     return fee;
 }
 

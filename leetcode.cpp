@@ -816,6 +816,35 @@ int numSubarrayProductLessThanK(vector<int>& nums, int k)
  0 < prices.length <= 50000.
  0 < prices[i] < 50000.
  0 <= fee < 50000.
+
+ for sequences [B1, S1], [B2,S2] ... [B(n-1), S(n-1)]
+ we have another [B(n), S(n)],''
+
+ we can approve:
+ if B(n) > B(k) + Sum(k, n-1) where  1 <= k <= n-1
+	the new sequences will be  [B1, S1], [B2,S2] ... [B(k),S(n)]
+ else
+	the new sequences will be  [B1, S1], [B2,S2]  ... [B(n-1), S(n-1)], [B(n), S(n)]
+
+records = []
+int sumprofits = 0;
+loop arr:
+	newbs = (bn, sn, p);
+	if !records:
+		records.add(bs);
+		sumprofits = newbs.p;
+	else:
+		int sum = 0;
+		for bs in records:
+			b = bs.b;
+			s = bs.s;
+			if newbs.b > b  + sumprofits - sum:
+				sumprofits = sum + newbs.s - b - fee
+				records.earse(bs.next(), records.end());
+				bs.s = newbs.s;
+				break;
+			sum += bs.p;
+ 
  */
 int maxProfit_iii(vector<int>& prices, int fee)
 {

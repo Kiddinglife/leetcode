@@ -854,7 +854,7 @@ loop arr:
  */
 int maxProfit_iii(vector<int>& prices, int fee)
 {
-	int vsize = static_cast<int>(prices.size());
+	/*int vsize = static_cast<int>(prices.size());
 	vector<int> newbsp(3, 0);
 	vector<vector<int>> records;
 	records.reserve(vsize);
@@ -902,7 +902,19 @@ int maxProfit_iii(vector<int>& prices, int fee)
 			}
 		}
 	}
-	return max(0,sumprofits);
+	return max(0,sumprofits);*/
+	int s0 = 0, s1 = INT_MIN;
+	for (int p : prices) 
+	{
+		cout << p << endl;
+		int tmp = s0;
+		s0 = max(s0, s1 + p);
+		cout << tmp << endl;
+		cout <<  s1 << "+" << p << "="<< s0 <<  endl;
+		s1 = max(s1, tmp - p - fee);
+		cout << tmp << "-" << p << "-" << fee << "=" << s1 << endl << endl;
+	}
+	return s0;
 }
 
 /*
@@ -1096,8 +1108,8 @@ int main()
 	// 1, 3, 2,8,4,9 k3 p6
 	// 1,5,9 k3 p5
 	// 1, 2 k3 p0
-	vector<int> array_maxProfit_iii{ 1,5,9 };
-	int fee_maxProfit_iii = 3;
+	vector<int> array_maxProfit_iii{ 1,3,3,8,4,9 };
+	int fee_maxProfit_iii = 1;
 	std::cout << "maxProfit_iii: ";
 	int ret_maxProfit_iii = maxProfit_iii(array_maxProfit_iii, fee_maxProfit_iii);
 	std::cout << ret_maxProfit_iii << endl;

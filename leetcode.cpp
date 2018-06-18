@@ -994,9 +994,8 @@ static void is_3_dimention_prime_fac(int nums[], int size)
 		if (nums[i] != nums[i - 1])
 		{
 			if (i - p > 1)
-			{
-
-			}
+				nums[p + 1] = nums[i];
+			p = i;
 		}
 	}
 }

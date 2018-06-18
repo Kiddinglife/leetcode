@@ -823,74 +823,17 @@ int numSubarrayProductLessThanK(vector<int>& nums, int k)
  0 < prices[i] < 50000.
  0 <= fee < 50000.
 
- for sequences [B1, S1], [B2,S2] ... [B(n-1), S(n-1)]
- we have another [B(n), S(n)],''
-
- we can approve:
- if B(n) > B(k) + Sum(k, n-1) where  1 <= k <= n-1
-	the new sequences will be  [B1, S1], [B2,S2] ... [B(k),S(n)]
- else
-	the new sequences will be  [B1, S1], [B2,S2]  ... [B(n-1), S(n-1)], [B(n), S(n)]
  */
 int maxProfit_iii(vector<int>& prices, int fee)
 {
-	/*int vsize = static_cast<int>(prices.size());
-	vector<int> newbsp(3, 0);
-	vector<vector<int>> records;
-	records.reserve(vsize);
-	int sumprofits = 0;
-	int buyprice;
-	int sellprice;
-	int p;
-	for (int i = 0; i < vsize && i+ 1 < vsize ; i++)
-	{
-		while (i + 1 < vsize && prices[i] >= prices[i+1]) i++;
-		newbsp[0] = prices[i];
-		while (i + 1 < vsize && prices[i] <= prices[i + 1]) i++;
-		newbsp[1] = prices[i];
-		newbsp[2] = newbsp[1] - newbsp[0] - fee;
-		if (records.size() == 0)
-		{
-				records.push_back(newbsp);
-				sumprofits = newbsp[2];
-		}
-		else
-		{
-			int sum = 0;
-			auto i = records.begin();
-			bool pushback = true;
-			while (i != records.end())
-			{
-				vector<int>& bsp = (*i);
-				if (newbsp[0] > bsp[0] + sumprofits - sum)
-				{
-					sumprofits = sum + newbsp[1] - bsp[0] - fee;
-					i = records.erase(i + 1, records.end());
-					bsp[1] = newbsp[1];
-					bsp[2] = bsp[1] - bsp[0] - fee;
-					pushback = false;
-					break;
-				}
-				else
-					++i;
-				sum += bsp[2];
-			}
-			if (pushback)
-			{
-				records.push_back(newbsp);
-				sumprofits += newbsp[2];
-			}
-		}
-	}
-	return max(0,sumprofits);*/
 	int s0 = 0, s1 = INT_MIN;
-	for (int p : prices) 
+	for (int p : prices)
 	{
 		cout << p << endl;
 		int tmp = s0;
 		s0 = max(s0, s1 + p);
 		cout << tmp << endl;
-		cout <<  s1 << "+" << p << "="<< s0 <<  endl;
+		cout << s1 << "+" << p << "=" << s0 << endl;
 		s1 = max(s1, tmp - p - fee);
 		cout << tmp << "-" << p << "-" << fee << "=" << s1 << endl << endl;
 	}
@@ -943,7 +886,8 @@ int sig_codility_q1(string &S)
 		entrystr = split(entry, ',');
 		time = std::move(entrystr[0]);
 		num = std::move(entrystr[1]);
-		for (auto& num : split(num, '-'))
+		auto numstrs = split(num, '-');
+		for (auto& num : numstrs)
 			phonenum += num;
 		digitalphonenum = atoi(phonenum.c_str());
 		cout << digitalphonenum << endl;
@@ -987,6 +931,74 @@ int sig_codility_q1(string &S)
 	fee -= logs[minphonenum].second;
 	cout << "smallest_num: " << minphonenum << " longest: " << longest << "fee: " << fee << endl;
 	return fee;
+}
+
+#include <iostream>
+using namespace std;
+
+/*AKUNA CAPITAL Quantitative Developer Interview Questions*/
+//  Q1: 9 Feb 2018 Junior Developer (C++) Interview
+// Several APIs are given. You're asked to write two functions to
+// compute round-trip time between two clients in a network.
+// Solution:
+#include <cstring>
+//#include <arpa/inet.h>
+//#include <sys/socket.h>
+#include <cstdio>
+#include <cstdlib>
+#include <chrono>
+// 1. use udp instead of tcp due to tcp's ack mecnism
+// 1234 where 1 is missing, 234 recived but hold in receiver buf
+// but they are not delivered to user layer which cause round time
+// measurement inaccurate.
+// 2. as udp is unreliable so we assign every packet a unique number
+// as its indentity, remeber sent time and when receiving the a packet,
+// unpack the number and use this number to find the againest sent time
+// do substact of the senttiem with received time. accumulate it to toal time intervals.
+
+//  Q2:10 Sep 2017 Junior Quantitative Developer Interview
+//1) Enter a dimension(number) and verify if it can be a 3 dimensional figure (minimum dimension is 2)
+//Eg. if you enter 8 -> (2 x 2 x 2) -> Yes
+//10 -> (5x2) -> No
+//12 -> (2x2x3) -> Yes
+// Solution:
+static bool is_3_dimention_prime_fac(int n)
+{
+	int c = 1;
+	int z = 2;
+	while (z * z <= n)
+	{
+		if (n % z == 0)
+		{
+			n /= z;
+			c++;
+			if (c == 3)
+				return true;
+		}
+		else
+			z++;
+	}
+	return false;
+}
+
+// 18 May 2018  Quantitative Developer Interview
+// had to sort numbers in an array that appeared numerous times
+// and output them so that they  only appeared once:
+// input -> [0001123333] output -> [0123]
+// Solution:
+static void is_3_dimention_prime_fac(int nums[], int size)
+{
+	int p = 0;
+	for (int i = 1; i < size; i++)
+	{
+		if (nums[i] != nums[i - 1])
+		{
+			if (i - p > 1)
+			{
+
+			}
+		}
+	}
 }
 
 int main()
@@ -1088,7 +1100,7 @@ int main()
 	// 1, 3, 2,8,4,9 k3 p6
 	// 1,5,9 k3 p5
 	// 1, 2 k3 p0
-	vector<int> array_maxProfit_iii{ 1,3,3,8,4,9 };
+	vector<int> array_maxProfit_iii{ 1, 3, 2, 8, 4, 9 };
 	int fee_maxProfit_iii = 1;
 	std::cout << "maxProfit_iii: ";
 	int ret_maxProfit_iii = maxProfit_iii(array_maxProfit_iii, fee_maxProfit_iii);

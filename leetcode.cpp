@@ -15,6 +15,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm>
+#include <mutex>
+
 using namespace std;
 
 // 1. Two Sum https://leetcode.com/problems/two-sum/description/
@@ -1000,6 +1002,24 @@ static void is_3_dimention_prime_fac(int nums[], int size)
   }
 }
 
+namespace _3_shared_data_protection
+{
+  namespace _2_mutex
+  {
+    list<int> somelist;
+    mutex somemutex;
+    void add2list(int new_value)
+    {
+      lock_guard<mutex> guard(somemutex);
+      somelist.push_back(new_value);
+    }
+    void bool listcontains(int v)
+    {
+      lock_guard<mutex> guard(somemutex);
+      return find(somelist.begin(), somelist.end(), v != somelist.end());
+    }
+  }
+}
 int main()
 {
   cout << "sig_codility_q1:" << endl;

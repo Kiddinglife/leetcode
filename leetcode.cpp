@@ -1002,6 +1002,52 @@ static void is_3_dimention_prime_fac(int nums[], int size)
 	}
 }
 
+// 5 Nov 2017 
+// 1. Given a list of numbers with some repeated elements, return a new list that every
+// element appears only once.For example, input list : [1, 2, 2, 3, 4, 4], output : [1, 2, 3, 4].
+//2. Return the powers of 2 in the inclusive range[low, high]('low', 'high' are positive integers).
+
+/********************* AKUNA CAPITAL Software Engineer Interview Questions *********************/
+// 29 Jun 2016 
+// Unusual sort: sort an array A such that: A[0]<A[1]>A[2]<A[3]>A[4]<A[5]............. wiggle sort
+
+// 28 Feb 2016
+// 1 Find largest products of two numbers from an array 
+// S: int first_two_min_negative_nums[2]; int first_two_max_positive_nums[2];
+// 2 Remove duplicates of an array  S: hashmap
+// 3 Two sum S: hashmap
+// number of bit 1 in a number S: sizeof(num)*8  while shift right anf then and 0x01
+
+// 4 Nov 2015
+// Why might multiple threads calling a simple function involving array access / possible modification
+// be much slower than a single thread calling a function ?
+// S: cache coherence
+
+// There are N satellites that can deliver messages.Each  satellite can only 
+// deliver messages to some subset of satellites.For each satellite that can 
+// send a message, each message has a delay in time.Given a starting satellite,
+// that sends a message return the minimum time required for all the satellites 
+// to receive the message.If the message cannot be broadcasted to all satellites
+// then return -1.
+// Solution:
+/************************************************************/
+/*                程序作者：Willam                          */
+/*                程序完成时间：2017/3/11                   */
+/*                有任何问题请联系：2930526477@qq.com       */
+/************************************************************/
+//@尽量写出完美的程序
+
+//#pragma once是一个比较常用的C/C++杂注，
+//只要在头文件的最开始加入这条杂注，
+//就能够保证头文件只被编译一次。
+
+/*
+本博客开始对Floyd算法的使用邻接矩阵实现的
+*/
+
+
+
+
 namespace _3_shared_data_protection
 {
 	namespace _2_mutex
@@ -1025,113 +1071,114 @@ namespace _3_shared_data_protection
 }
 int main()
 {
-	cout << "sig_codility_q1:" << endl;
-	string logs = "00:05:00,701-080-080\n"
-		"00:05:00,400-234-090";
-	cout << sig_codility_q1(logs);
+	//cout << "sig_codility_q1:" << endl;
+	//string logs = "00:05:00,701-080-080\n"
+	//	"00:05:00,400-234-090";
+	//cout << sig_codility_q1(logs);
 
-	vector<int> vec_two_sum{ 0, 0, 3, 4 };
-	int target_two_sum = 0;
-	vector<int> ret_two_sum = twoSum(vec_two_sum, target_two_sum);
-	std::cout << "\ntwo_sum_ret: ";
-	for (size_t i = 0; i < ret_two_sum.size(); i++)
-		std::cout << ret_two_sum[i] << " ";
-	std::cout << endl;
+	//vector<int> vec_two_sum{ 0, 0, 3, 4 };
+	//int target_two_sum = 0;
+	//vector<int> ret_two_sum = twoSum(vec_two_sum, target_two_sum);
+	//std::cout << "\ntwo_sum_ret: ";
+	//for (size_t i = 0; i < ret_two_sum.size(); i++)
+	//	std::cout << ret_two_sum[i] << " ";
+	//std::cout << endl;
 
-	vector<int> two_sum_sorted_array{ 0, 0, 3, 4 };
-	int two_sum_sorted_target = 0;
-	vector<int> two_sum_sorted_ret = twoSumSorted(two_sum_sorted_array, two_sum_sorted_target);
-	std::cout << "two_sum_sorted_ret: ";
-	for (size_t i = 0; i < two_sum_sorted_ret.size(); i++)
-		std::cout << two_sum_sorted_ret[i] << " ";
-	std::cout << endl;
+	//vector<int> two_sum_sorted_array{ 0, 0, 3, 4 };
+	//int two_sum_sorted_target = 0;
+	//vector<int> two_sum_sorted_ret = twoSumSorted(two_sum_sorted_array, two_sum_sorted_target);
+	//std::cout << "two_sum_sorted_ret: ";
+	//for (size_t i = 0; i < two_sum_sorted_ret.size(); i++)
+	//	std::cout << two_sum_sorted_ret[i] << " ";
+	//std::cout << endl;
 
-	vector<vector<int> > sum3_ret;
-	vector<int> sum3_iput{ -2, 0, 1, 1, 2 }; //-2 -2 -2  0000 111  2222
-	sum3_ret = threeSum(sum3_iput);
-	std::cout << "three_sum_ret: ";
-	if (sum3_ret.empty())
-		cout << "[]";
-	else
-		for (int i = 0; i < (int)sum3_ret.size(); i++)
-		{
-			cout << "[";
-			for (int ii = 0; ii < (int)sum3_ret[i].size(); ii++)
-			{
-				cout << sum3_ret[i][ii] << ", ";
-			}
-			cout << "], ";
-		}
+	//vector<vector<int> > sum3_ret;
+	//vector<int> sum3_iput{ -2, 0, 1, 1, 2 }; //-2 -2 -2  0000 111  2222
+	//sum3_ret = threeSum(sum3_iput);
+	//std::cout << "three_sum_ret: ";
+	//if (sum3_ret.empty())
+	//	cout << "[]";
+	//else
+	//	for (int i = 0; i < (int)sum3_ret.size(); i++)
+	//	{
+	//		cout << "[";
+	//		for (int ii = 0; ii < (int)sum3_ret[i].size(); ii++)
+	//		{
+	//			cout << sum3_ret[i][ii] << ", ";
+	//		}
+	//		cout << "], ";
+	//	}
 
-	int sum3_closeast_ret;
-	vector<int> sum3_closeast_array{ -4, -1, 1, 2 };
-	int sum3_closeast_tartget = 1;
-	sum3_closeast_ret = threeSumClosest(sum3_closeast_array, sum3_closeast_tartget);
-	cout << "\nsum3_closeast_ret: " << sum3_closeast_ret << endl;
+	//int sum3_closeast_ret;
+	//vector<int> sum3_closeast_array{ -4, -1, 1, 2 };
+	//int sum3_closeast_tartget = 1;
+	//sum3_closeast_ret = threeSumClosest(sum3_closeast_array, sum3_closeast_tartget);
+	//cout << "\nsum3_closeast_ret: " << sum3_closeast_ret << endl;
 
-	vector<int> remove_duplicates_array{ 1, 1, 2 };
-	int remove_duplicates_ret = removeDuplicates(remove_duplicates_array);
-	std::cout << "remove_duplicates_ret: " << remove_duplicates_ret << ", array: ";
-	for (int i = 0; i < remove_duplicates_ret; i++)
-		std::cout << remove_duplicates_array[i] << " ";
-	std::cout << endl;
+	//vector<int> remove_duplicates_array{ 1, 1, 2 };
+	//int remove_duplicates_ret = removeDuplicates(remove_duplicates_array);
+	//std::cout << "remove_duplicates_ret: " << remove_duplicates_ret << ", array: ";
+	//for (int i = 0; i < remove_duplicates_ret; i++)
+	//	std::cout << remove_duplicates_array[i] << " ";
+	//std::cout << endl;
 
-	vector<int> remove_element_array{ 1, 1, 1, 0, 1, 1, 0 };
-	int removing_element = 1;
-	int remove_element_ret = removeElement(remove_element_array, removing_element);
-	std::cout << "remove_element_ret: " << remove_element_ret << ", array: ";
-	for (int i = 0; i < remove_element_ret; i++)
-		std::cout << remove_element_array[i] << " ";
-	std::cout << endl;
+	//vector<int> remove_element_array{ 1, 1, 1, 0, 1, 1, 0 };
+	//int removing_element = 1;
+	//int remove_element_ret = removeElement(remove_element_array, removing_element);
+	//std::cout << "remove_element_ret: " << remove_element_ret << ", array: ";
+	//for (int i = 0; i < remove_element_ret; i++)
+	//	std::cout << remove_element_array[i] << " ";
+	//std::cout << endl;
 
-	vector<int> findDisappearedNumbers_array{ 4, 3, 2, 7, 8, 2, 3, 1 };
-	vector<int> findDisappearedNumbers_ret = findDisappearedNumbers(findDisappearedNumbers_array);
-	std::cout << "findDisappearedNumbers_ret: ";
-	for (int i = 0; i < (int)findDisappearedNumbers_ret.size(); i++)
-		std::cout << findDisappearedNumbers_ret[i] << " ";
-	std::cout << endl;
+	//vector<int> findDisappearedNumbers_array{ 4, 3, 2, 7, 8, 2, 3, 1 };
+	//vector<int> findDisappearedNumbers_ret = findDisappearedNumbers(findDisappearedNumbers_array);
+	//std::cout << "findDisappearedNumbers_ret: ";
+	//for (int i = 0; i < (int)findDisappearedNumbers_ret.size(); i++)
+	//	std::cout << findDisappearedNumbers_ret[i] << " ";
+	//std::cout << endl;
 
-	vector<int> array_rotate_array{ 1, 2, 3, 4, 5, 6, 7 };
-	int k = 4;
-	array_rotate(array_rotate_array, k);
-	std::cout << "array_rotate_array_ret: ";
-	for (int i = 0; i < (int)array_rotate_array.size(); i++)
-		std::cout << array_rotate_array[i] << " ";
-	std::cout << endl;
+	//vector<int> array_rotate_array{ 1, 2, 3, 4, 5, 6, 7 };
+	//int k = 4;
+	//array_rotate(array_rotate_array, k);
+	//std::cout << "array_rotate_array_ret: ";
+	//for (int i = 0; i < (int)array_rotate_array.size(); i++)
+	//	std::cout << array_rotate_array[i] << " ";
+	//std::cout << endl;
 
-	string s = "()[]";
-	cout << "isValid ret: ";
-	cout << isValid(s) << endl;
+	//string s = "()[]";
+	//cout << "isValid ret: ";
+	//cout << isValid(s) << endl;
 
-	vector<int> array_maxProduct{ 2, };
-	std::cout << "maxProduct: ";
-	int ret_maxProduct = maxProduct(array_maxProduct);
-	std::cout << ret_maxProduct << endl;
+	//vector<int> array_maxProduct{ 2, };
+	//std::cout << "maxProduct: ";
+	//int ret_maxProduct = maxProduct(array_maxProduct);
+	//std::cout << ret_maxProduct << endl;
 
-	vector<int> array_maxProfit{ 7, 6, 4, 3, 1 };
-	std::cout << "maxProfit: ";
-	int ret_maxProfit = maxProfit_i(array_maxProfit);
-	std::cout << ret_maxProfit << endl;
+	//vector<int> array_maxProfit{ 7, 6, 4, 3, 1 };
+	//std::cout << "maxProfit: ";
+	//int ret_maxProfit = maxProfit_i(array_maxProfit);
+	//std::cout << ret_maxProfit << endl;
 
-	vector<int> array_maxProfit_ii{ 7, 6, 4, 3, 1 };
-	std::cout << "maxProfit_ii: ";
-	int ret_maxProfit_ii = maxProfit_ii(array_maxProfit_ii);
-	std::cout << ret_maxProfit_ii << endl;
+	//vector<int> array_maxProfit_ii{ 7, 6, 4, 3, 1 };
+	//std::cout << "maxProfit_ii: ";
+	//int ret_maxProfit_ii = maxProfit_ii(array_maxProfit_ii);
+	//std::cout << ret_maxProfit_ii << endl;
 
-	// 1, 3, 7, 5, 10, 3  k3 p6
-	// 1, 3, 2,8,4,9 k3 p6
-	// 1,5,9 k3 p5
-	// 1, 2 k3 p0
-	vector<int> array_maxProfit_iii{ 1, 3, 2, 8, 4, 9 };
-	int fee_maxProfit_iii = 1;
-	std::cout << "maxProfit_iii: ";
-	int ret_maxProfit_iii = maxProfit_iii(array_maxProfit_iii, fee_maxProfit_iii);
-	std::cout << ret_maxProfit_iii << endl;
+	//// 1, 3, 7, 5, 10, 3  k3 p6
+	//// 1, 3, 2,8,4,9 k3 p6
+	//// 1,5,9 k3 p5
+	//// 1, 2 k3 p0
+	//vector<int> array_maxProfit_iii{ 1, 3, 2, 8, 4, 9 };
+	//int fee_maxProfit_iii = 1;
+	//std::cout << "maxProfit_iii: ";
+	//int ret_maxProfit_iii = maxProfit_iii(array_maxProfit_iii, fee_maxProfit_iii);
+	//std::cout << ret_maxProfit_iii << endl;
 
-	vector<int> array_findNumberOfLIS{ 1, 2, 4, 3, 5, 4, 7, 2 };
-	std::cout << "findNumberOfLIS: ";
-	int ret_findNumberOfLIS = findNumberOfLIS(array_findNumberOfLIS);
-	std::cout << ret_findNumberOfLIS << endl;
+	//vector<int> array_findNumberOfLIS{ 1, 2, 4, 3, 5, 4, 7, 2 };
+	//std::cout << "findNumberOfLIS: ";
+	//int ret_findNumberOfLIS = findNumberOfLIS(array_findNumberOfLIS);
+	//std::cout << ret_findNumberOfLIS << endl;
 
+	//floyd_main();
 	return 0;
 }

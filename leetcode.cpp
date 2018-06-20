@@ -1054,11 +1054,11 @@ namespace _3_shared_data_protection
      *  same mutex locker
      */
     stack<vector<int>> data;
-    mutable mutex lock;
+    mutex m;
     // some threads execute pop_stack
     void pop_stack(vector<int>& v)
     {
-      lock_guard<mutex> lock(lock);
+      lock_guard<mutex> lock(m);
       if (!data.empty())
       {
         v = std::move(data.top());
@@ -1068,7 +1068,7 @@ namespace _3_shared_data_protection
     // some threads execute push_stack
     void push_stack()
     {
-      lock_guard<mutex> lock(lock);
+      lock_guard<mutex> lock(m);
       data.push( { 1, 2, 3 });
     }
 
@@ -1112,8 +1112,8 @@ namespace _3_shared_data_protection
           // this locked                        other locked
 
           // Solution 1: always lock mutexes in same order
-          lock_guard<mutex> lock(other.lock);
-          lock_guard<mutex> lock(this->lock);
+          lock_guard<mutex> lockother(other.lock);
+          lock_guard<mutex> lockthis(this->lock);
           return *this;
         }
         thr_safe_stack& operator=(thr_safe_stack&&) = delete;

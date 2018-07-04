@@ -993,7 +993,7 @@ static bool is_3_dimention_prime_fac(int n)
 // and output them so that they  only appeared once:
 // input -> [0001123333] output -> [0123]
 // Solution:
-static void is_3_dimention_prime_fac(int nums[], int size)
+static void appear_once(int nums[], int size)
 {
   int p = 0;
   for (int i = 1; i < size; i++)
@@ -1335,7 +1335,8 @@ namespace virtual_methods_table
         cout << "MultipleDerive::Fun3" << endl;
       }
   };
-// 多重继承重载
+
+  // 多重继承重载
   class MultipleDeriveOverride: public Base, public Base1, public Base2
   {
     public:
@@ -1352,7 +1353,8 @@ namespace virtual_methods_table
         cout << "MultipleDerive::Fun3" << endl;
       }
   };
-// 公有继承访问父类非公有虚函数
+
+  // 公有继承访问父类非公有虚函数
   class Base3
   {
     private:
@@ -1369,6 +1371,7 @@ namespace virtual_methods_table
   {
   };
   typedef void (*Fun)(void);
+
   void Sub_7()
   {
     Derive1 v1;

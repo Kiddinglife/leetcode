@@ -1153,49 +1153,376 @@ namespace _3_shared_data_protection
 namespace Cache_coherence
 {
 /**
-  https://cs.stackexchange.com/questions/20044/memory-consistency-vs-cache-coherence
-  https://en.wikipedia.org/wiki/Cache_coherence
+ https://cs.stackexchange.com/questions/20044/memory-consistency-vs-cache-coherence
+ https://en.wikipedia.org/wiki/Cache_coherence
 
-  My understandings:
-  this make sure sequencial consistency available in mutiprocessor systems by soving out delays between
-  different reads/writes operations to a single memory location that mabe performed on multi threads
-  in any order (due to nature of race codition of multi threads ).
+ My understandings:
+ this make sure sequencial consistency available in mutiprocessor systems by soving out delays between
+ different reads/writes operations to a single memory location that mabe performed on multi threads
+ in any order (due to nature of race codition of multi threads ).
 
-  There are many writes and many reads interlevely by many threads in store-load-sequence,
-  the write and read order is detemrined by race codition (who runs first, who runs secondly).
+ There are many writes and many reads interlevely by many threads in store-load-sequence,
+ the write and read order is detemrined by race codition (who runs first, who runs secondly).
 
-  see store-load-sequence below:
-  ...s0...s1...l1...s2...l2...
-  if trsaction serilization enabled:
-    the thread of l1 must see 0 ---> 1,  load value 1 eventually in this case
-    the thread of l2 must see 0 ---> 1 ---> 2,  load value 2 eventually  in this case
-    the thread of l2 must see 0 ---> 1 ---> 2,  load value 2 eventually  in this case
+ see store-load-sequence below:
+ ...s0...s1...l1...s2...l2...
+ if trsaction serilization enabled:
+ the thread of l1 must see 0 ---> 1,  load value 1 eventually in this case
+ the thread of l2 must see 0 ---> 1 ---> 2,  load value 2 eventually  in this case
+ the thread of l2 must see 0 ---> 1 ---> 2,  load value 2 eventually  in this case
  else:
-    the thread of l1 may see unordered sequence 1 ---> 0,             load value 0 eventually  in this case
-    the thread of l2 may see unordered sequence 0 ---> 2 ---> 1,  load value 1 eventually in this case ()
-    the thread of l2 may see ordered sequence      0 ---> 1 ---> 2,  load value 2 eventually in this case
+ the thread of l1 may see unordered sequence 1 ---> 0,             load value 0 eventually  in this case
+ the thread of l2 may see unordered sequence 0 ---> 2 ---> 1,  load value 1 eventually in this case ()
+ the thread of l2 may see ordered sequence      0 ---> 1 ---> 2,  load value 2 eventually in this case
 
-  sequencial consistency must be meory cohernce but the reversed is not true.
-  initially int a =0, b = 0
-  t1 stores 1 to a
-  t1 stores 1 to b
-  t3 loads a;
-  t4 loads b;
-  if it is memory cohence:
-    t1 stores 1 to b (b=1)
-    t3 loads a  (a= 0)
-    t1 stores 1 to a (a=1)
-    t3 loads b (b=1)
+ sequencial consistency must be meory cohernce but the reversed is not true.
+ initially int a =0, b = 0
+ t1 stores 1 to a
+ t1 stores 1 to b
+ t3 loads a;
+ t4 loads b;
+ if it is memory cohence:
+ t1 stores 1 to b (b=1)
+ t3 loads a  (a= 0)
+ t1 stores 1 to a (a=1)
+ t3 loads b (b=1)
 
-  if it is sequencial consistency:
-    t1 stores 1 to a (a=1)
-    t1 stores 1 to b (b=1)
-    t4 loads b; (b=1)
-    t3 loads a; (a=1)
-
-
+ if it is sequencial consistency:
+ t1 stores 1 to a (a=1)
+ t1 stores 1 to b (b=1)
+ t4 loads b; (b=1)
+ t3 loads a; (a=1)
  */
+}
+namespace aligns_test
+{
+  struct alignas(64) spsc_queue
+  {
+      alignas(64)
+      atomic<size_t> write_index_;alignas(64)
+      atomic<size_t> read_index_;
+      int hello(int)
+      {
+        return 0;
+      }
+  };
 
+  void run()
+  {
+    // getconf LEVEL1_DCACHE_LINESIZE usually it is 64bytes
+    spsc_queue s;
+    cout << "sizeof(S): " << sizeof(spsc_queue) << ", aligned to 64: " << (((uintptr_t) &s) & 63) << endl;
+    int (spsc_queue::*sp)(int) = &spsc_queue::hello;
+    (s.*sp)(12);
+    spsc_queue* sptr = &s;
+    (sptr->*sp)(12);
+  }
+}
+
+namespace virtual_methods_table
+{
+// 基类
+  class Base
+  {
+    public:
+      virtual void Fun1()
+      {
+        cout << "Base::Fun1" << endl;
+      }
+      virtual void Fun2()
+      {
+        cout << "Base::Fun2" << endl;
+      }
+      virtual void Fun3()
+      {
+        cout << "Base::Fun3" << endl;
+      }
+      virtual ~Base()
+      {
+      }
+    private:
+
+  };
+
+// 无重载继承类
+  class Derive: Base
+  {
+    public:
+      virtual void DeriveFun1()
+      {
+        cout << "Derive::Fun1" << endl;
+      }
+      virtual void DeriveFun2()
+      {
+        cout << "Derive::Fun2" << endl;
+      }
+      virtual void DeriveFun3()
+      {
+        cout << "Derive::Fun3" << endl;
+      }
+  };
+
+// 重载继承类
+  class Override: public Base
+  {
+    public:
+      virtual void Fun1()
+      {
+        cout << "Override::Fun1" << endl;
+      }
+      virtual void OverrideFun2()
+      {
+        cout << "Override::Fun2" << endl;
+      }
+      virtual void OverrideFun3()
+      {
+        cout << "Override::Fun3" << endl;
+      }
+  };
+
+// 多重继承无重载
+  class Base1
+  {
+    public:
+      virtual void Fun1()
+      {
+        cout << "Base1::Fun1" << endl;
+      }
+      virtual void Fun2()
+      {
+        cout << "Base1::Fun2" << endl;
+      }
+      virtual void Fun3()
+      {
+        cout << "Base1::Fun3" << endl;
+      }
+      virtual ~Base1()
+      {
+      }
+  };
+  class Base2
+  {
+    public:
+      virtual void Fun1()
+      {
+        cout << "Base2::Fun1" << endl;
+      }
+      virtual void Fun2()
+      {
+        cout << "Base2::Fun2" << endl;
+      }
+      virtual void Fun3()
+      {
+        cout << "Base2::Fun3" << endl;
+      }
+      virtual ~Base2()
+      {
+      }
+  };
+  class MultipleDerive: public Base, public Base1, public Base2
+  {
+    public:
+      virtual void MultipleDeriveFun1()
+      {
+        cout << "MultipleDerive::Fun1" << endl;
+      }
+      virtual void MultipleDeriveFun2()
+      {
+        cout << "MultipleDerive::Fun2" << endl;
+      }
+      virtual void MultipleDeriveFun3()
+      {
+        cout << "MultipleDerive::Fun3" << endl;
+      }
+  };
+// 多重继承重载
+  class MultipleDeriveOverride: public Base, public Base1, public Base2
+  {
+    public:
+      virtual void Fun1()
+      {
+        cout << "MultipleDerive::Fun1" << endl;
+      }
+      virtual void MultipleDeriveFun2()
+      {
+        cout << "MultipleDerive::Fun2" << endl;
+      }
+      virtual void MultipleDeriveFun3()
+      {
+        cout << "MultipleDerive::Fun3" << endl;
+      }
+  };
+// 公有继承访问父类非公有虚函数
+  class Base3
+  {
+    private:
+      virtual void Fun1()
+      {
+        cout << "Base3::Fun1" << endl;
+      }
+    public:
+      virtual ~Base3()
+      {
+      }
+  };
+  class Derive1: public Base3
+  {
+  };
+  typedef void (*Fun)(void);
+  void Sub_7()
+  {
+    Derive1 v1;
+    Fun pFun = (Fun) *((int*) *(int*) (&v1) + 0);
+    pFun();
+  }
+  void Sub_6()
+  {
+    Base *v1 = new Override();
+    // 多态
+    v1->Fun1();
+    Fun pFun = NULL;
+    //pFun = (Fun)*((Override*)(v1));
+    pFun();
+  }
+  void Sub_5()
+  {
+    MultipleDeriveOverride v1;
+    Fun pFun = NULL;
+    Base *b = &v1;
+    Base1 *b1 = &v1;
+    Base2 *b2 = &v1;
+    b->Fun1();
+    b->Fun2();
+    b->Fun3();
+    b1->Fun1();
+    b1->Fun2();
+    b1->Fun3();
+    b2->Fun1();
+    b2->Fun2();
+    b2->Fun3();
+  }
+  void Sub_4()
+  {
+    MultipleDerive v1;
+    Fun pFun = NULL;
+    int** pVtable = (int**) &v1;
+    // Base的第一函数
+    pFun = (Fun) pVtable[0][0];
+    pFun();
+    // Base的第二函数
+    pFun = (Fun) pVtable[0][1];
+    pFun();
+    // Base的第三函数
+    pFun = (Fun) pVtable[0][2];
+    pFun();
+    // 继承类的第一函数
+    pFun = (Fun) pVtable[0][3];
+    pFun();
+    // 继承类的第二函数
+    pFun = (Fun) pVtable[0][4];
+    pFun();
+    // 继承类的第三函数
+    pFun = (Fun) pVtable[0][5];
+    pFun();
+    // Base1的第一函数
+    pFun = (Fun) pVtable[1][0];
+    pFun();
+    // Base1的第二函数
+    pFun = (Fun) pVtable[1][1];
+    pFun();
+    // Base1的第三函数
+    pFun = (Fun) pVtable[1][2];
+    pFun();
+    // Base2的第一函数
+    pFun = (Fun) pVtable[2][0];
+    pFun();
+    // Base2的第二函数
+    pFun = (Fun) pVtable[2][1];
+    pFun();
+    // Base2的第三函数
+    pFun = (Fun) pVtable[2][2];
+    pFun();
+  }
+  void Sub_3()
+  {
+    Override v1;
+    Fun pFun = NULL;
+    // 运行重载第一函数
+    pFun = (Fun) *((int*) *(int*) (&v1));
+    pFun();
+    // 运行父类第二函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 1);
+    pFun();
+    // 运行父类第三函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 2);
+    pFun();
+    // 运行重载第二函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 3);
+    pFun();
+    // 运行重载第三函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 4);
+    pFun();
+  }
+  void Sub_2()
+  {
+    Derive v1;
+    Fun pFun = NULL;
+    // 运行父类第一函数
+    pFun = (Fun) *((int*) *(int*) (&v1));
+    pFun();
+    // 运行父类第二函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 1);
+    pFun();
+    // 运行父类第三函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 2);
+    pFun();
+    // 运行子类第一函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 3);
+    pFun();
+    // 运行子类第二函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 4);
+    pFun();
+    // 运行子类第三函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 5);
+    pFun();
+  }
+  void Sub_1()
+  {
+    Base v1;
+    int* vt = reinterpret_cast<int*>(*((int*) &v1));
+    Fun pFun = NULL;
+    cout << "虚函数表地址：" << (int*) (&v1) << endl;
+    cout << "虚函数表第一函数地址：" << (int*) *(int*) (&v1) << endl;
+    // 运行第一个函数
+    pFun = (Fun) *((int*) *(int*) (&v1));
+    pFun();
+    // 运行第二个函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 1);
+    pFun();
+    // 运行第三个函数
+    pFun = (Fun) *((int*) *(int*) (&v1) + 2);
+    pFun();
+    // 虚函数表的结束
+    cout << ((&v1) + 3) << endl;
+  }
+
+  void run()
+  {
+    // 验证虚函数表
+    //Sub_1();
+    // 验证无虚函数覆盖的一般继承
+    Sub_2();
+    // 验证虚函数重载父类的虚表
+    Sub_3();
+    // 验证多重继承无重载的虚表
+    //Sub_4();
+    // 验证多重继承有重载的虚表
+    //Sub_5();
+    // 验证父类指针访问子类自己的虚函数??
+    //Sub_6();
+    // 验证公有继承访问父类非公有虚函数
+    //Sub_7();
+  }
 }
 namespace _5_2_reading_and_writing_variables_from_different_threads
 {
@@ -1219,8 +1546,65 @@ namespace _5_2_reading_and_writing_variables_from_different_threads
     data_ready = true;
   }
 }
+
+namespace round_robin
+{
+  void simulate()
+  {
+    printf("total processes:\t ");
+    int process_num;
+    scanf("%d", &process_num);
+    int remain_process_num = process_num;
+
+    int* arrive_times = new int[process_num];
+    int* wait_times = new int[process_num];
+    int* burst_times = new int[process_num];
+    int* turnaround_times = new int[process_num];
+    int* remain_burst_times = new int[process_num];
+    int count = 0;
+    for (; count < process_num; count++)
+    {
+      printf("Enter arrival time and burst time for the processes %d : ", count);
+      scanf("%d", &arrive_times[count]);
+      scanf("%d", &burst_times[count]);
+      remain_burst_times[count] = burst_times[count];
+      wait_times[count] = 0;
+      turnaround_times[count] = 0;
+    }
+
+    printf("Enter Time Slice:\t");
+    int time_slice;
+    scanf("%d", &time_slice);
+
+    printf("\n\nProcess\t|Turnaround Time|Waiting Time\n\n");
+    bool completed = false;
+    for (int time = 0, count = 0; remain_process_num != 0;)
+    {
+      if (remain_burst_times[count] <= time_slice && remain_burst_times[count] > 0)
+      {
+        time += remain_burst_times[count];
+        remain_burst_times[count] = 0;
+        completed = true;
+      }
+      else if (remain_burst_times[count] > 0)
+      {
+        time += time_slice;
+        remain_burst_times[count] -= time_slice;
+      }
+      if (remain_burst_times[count] == 0 && completed)
+      {
+        remain_process_num--;
+        wait_times[count] = time - arrive_times[count] - burst_times[count];
+      }
+    }
+  }
+}
+
 int main()
 {
+
+  //aligns_test::run();
+  virtual_methods_table::run();
   //cout << "sig_codility_q1:" << endl;
   //string logs = "00:05:00,701-080-080\n"
   //	"00:05:00,400-234-090";
@@ -1331,5 +1715,19 @@ int main()
   //std::cout << ret_findNumberOfLIS << endl;
 
   //floyd_main();
+
+  union
+  {
+      struct
+      {
+          char a :1;
+          char b :2;
+          char c :3;
+      } d;
+      char e;
+  } f;
+  f.e = 1;
+  printf("%d\n", f.d.a);
+
   return 0;
 }
